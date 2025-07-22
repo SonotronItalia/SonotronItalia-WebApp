@@ -69,3 +69,25 @@ restore:
 	else \
 		echo "❌ File $(ZIP_FILE) non trovato."; \
 	fi
+# ✅ Ricrea il file .env da .env.example se mancante
+env:
+	@echo "⚙️  Controllo file .env..."
+	@if [ ! -f .env ] && [ -f .env.example ]; then \
+		cp .env.example .env; \
+		echo "✅ File .env creato da .env.example"; \
+	else \
+		echo "ℹ️  File .env già presente o .env.example mancante"; \
+	fi
+
+# ✅ Installa dipendenze se mancano
+deps:
+	@echo "📦 Controllo dipendenze (npm)..."
+	@if [ ! -d node_modules ]; then \
+		npm install; \
+	else \
+		echo "ℹ️  Dipendenze già installate"; \
+	fi
+
+# ✅ Comando completo post-clone
+setup: env deps restore
+	@echo "🚀 Ambiente pronto. Puoi avviare Strapi con: npm run develop"
