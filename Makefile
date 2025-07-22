@@ -1,8 +1,11 @@
 # Comandi frontend
-FRONTEND_DIR=frontend
-BACKEND_DIR=backend
+FRONTEND_DIR=sonotron-frontend
+BACKEND_DIR=sonotron-backend
 
-.PHONY: all setup dev backup-db restore-db
+DB_FILE=sonotron-backend/.tmp/data.db
+ZIP_FILE=sonotron-backend/db_backup.zip
+
+.PHONY: all setup dev backup restore
 
 # ✅ Setup completo: installa deps, crea .env e ripristina db
 setup:
@@ -25,10 +28,24 @@ dev:
 		"cd $(FRONTEND_DIR) && npm run dev" \
 		"cd $(BACKEND_DIR) && npm run develop"
 
-# ✅ Backup del database
-backup-db:
-	@$(MAKE) -C $(BACKEND_DIR) backup
 
-# ✅ Restore del database
-restore-db:
-	@$(MAKE) -C $(BACKEND_DIR) restore
+# ✅ Comprime il database
+backup:
+	@echo "🔄 Creazione archivio $(ZIP_FILE)..."
+	@if [ -f $(DB_FILE) ]; then \
+		zip -j $(ZIP_FILE) $(DB_FILE); \
+		echo "✅ Backup creato in $(ZIP_FILE)"; \
+	else \
+		echo "❌ File $(DB_FILE) non trovato."; \
+	fi
+
+# ✅ Estrae e sostituisce il database
+restore:
+	@echo "📦 Ripristino database da $(ZIP_FILE)..."
+	@if [ -f $(ZIP_FILE) ]; then \
+		unzip -o $(ZIP_FILE) -d .; \
+		mv $(DB_FILE) .tmp/ \
+		echo "✅ $(DB_FILE) ripristinato."; \
+	else \
+		echo "❌ File $(ZIP_FILE) non trovato."; \
+	fi
