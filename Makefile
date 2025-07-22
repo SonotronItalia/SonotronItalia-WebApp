@@ -5,7 +5,10 @@ BACKEND_DIR=sonotron-backend
 DB_FILE=sonotron-backend/.tmp/data.db
 ZIP_FILE=sonotron-backend/db_backup.zip
 
-.PHONY: all setup dev backup restore
+FRONTEND_PID=.frontend.pid
+BACKEND_PID=.backend.pid
+
+.PHONY: all setup dev stop backup restore
 
 # ✅ Setup completo: installa deps, crea .env e ripristina db
 setup:
@@ -27,6 +30,23 @@ dev:
 	npx concurrently \
 		"cd $(FRONTEND_DIR) && npm run dev" \
 		"cd $(BACKEND_DIR) && npm run develop"
+
+
+# 🛑 Stop frontend + backend usando i PID salvati
+stop:
+	@echo "🛑 Arresto processi..."
+	@if [ -f $(FRONTEND_PID) ]; then \
+		kill `cat $(FRONTEND_PID)` && rm -f $(FRONTEND_PID) && echo "✔️  Frontend fermato."; \
+	else \
+		echo "ℹ️  Nessun frontend da fermare."; \
+	fi
+
+	@if [ -f $(BACKEND_PID) ]; then \
+		kill `cat $(BACKEND_PID)` && rm -f $(BACKEND_PID) && echo "✔️  Backend fermato."; \
+	else \
+		echo "ℹ️  Nessun backend da fermare."; \
+	fi
+
 
 
 # ✅ Comprime il database
