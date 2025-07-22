@@ -1,3 +1,6 @@
 [submodule "sonotron-backend"]
 	path = sonotron-backend
 	url = https://github.com/SonotronItalia/SonotronItalia-backend.git
+[submodule "sonotron-frontend"]
+	path = sonotron-frontend
+	url = https://github.com/SonotronItalia/SonotronItalia-frontend.git
